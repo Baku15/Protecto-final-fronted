@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.d-flex {
+  height: 100vh;
+  display: flex; /* Recuerda agregar esto para que sea layout horizontal */
+}
+
+nav, main {
+  overflow-y: auto;
+}

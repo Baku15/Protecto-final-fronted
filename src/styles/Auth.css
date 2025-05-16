@@ -1,0 +1,22 @@
+body {
+    background-image: url('/public/ucb-logo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 56px); /* navbar height */
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.auth-form {
+    width: 100%;
+    max-width: 500px;
+}
+
