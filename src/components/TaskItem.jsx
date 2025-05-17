@@ -1,8 +1,9 @@
-// TaskItem.jsx
 import { useState } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import styles from './TaskItem.module.css'; // Import CSS Module
+
 dayjs.locale('es');
 
 const TaskItem = ({ tarea, onUpdate, onDelete }) => {
@@ -60,10 +61,17 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
         try {
             let nuevoEstado = tarea.status;
 
-            if (tarea.status === 'pendiente') {
-                nuevoEstado = 'progreso';
-            } else if (tarea.status === 'progreso') {
+            const hoy = dayjs().startOf('day');
+            const fechaLimite = tarea.dueDate ? dayjs(tarea.dueDate).startOf('day') : null;
+
+            if (tarea.status === 'progreso') {
+                if (fechaLimite && fechaLimite.isBefore(hoy)) {
+                    setError('No puedes completar una tarea que ya venció.');
+                    return;
+                }
                 nuevoEstado = 'completada';
+            } else if (tarea.status === 'pendiente') {
+                nuevoEstado = 'progreso';
             } else if (tarea.status === 'completada') {
                 nuevoEstado = 'progreso';
             }
@@ -117,7 +125,7 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
                     min={dayjs().format('YYYY-MM-DD')}
                 />
             </div>
-            {error && <div className="alert alert-danger">{error}</div>}
+            {error && <div className={styles.alertError}>{error}</div>}
             <div className="text-end">
                 <button className="btn btn-success me-2" onClick={actualizarTarea}>
                     <i className="bi bi-check-circle me-1"></i>Guardar
@@ -133,13 +141,13 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
         const vencida = tarea.dueDate && dayjs(tarea.dueDate).isBefore(dayjs(), 'day');
 
         return (
-            <li className="list-group-item mb-3 rounded-4 shadow-sm border border-1 p-3 animate__animated animate__fadeIn">
-                <div className="d-flex justify-content-between gap-3">
-                    <div className="flex-grow-1">
+            <li className={styles.listItem}>
+                <div className={styles.flexContainer}>
+                    <div className={styles.flexGrow}>
                         <div className="form-check">
                             <input
                                 type="checkbox"
-                                className="form-check-input me-2"
+                                className={`form-check-input ${styles.formCheckInput}`}
                                 id={`check-${tarea.id}`}
                                 checked={tarea.status === 'completada'}
                                 onChange={alternarEstado}
@@ -148,27 +156,27 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
                                 htmlFor={`check-${tarea.id}`}
                                 className={`form-check-label ${
                                     tarea.status === 'progreso'
-                                        ? 'fw-bold text-primary'
+                                        ? styles.titleProgreso
                                         : tarea.status === 'pendiente'
-                                            ? 'fw-bold text-dark'
-                                            : 'fw-bold text-success'
+                                            ? styles.titlePendiente
+                                            : styles.titleCompletada
                                 }`}
                             >
                                 {tarea.title}
                             </label>
                         </div>
-                        {tarea.description && <div className="text-secondary">{tarea.description}</div>}
+                        {tarea.description && <div className={styles.descriptionText}>{tarea.description}</div>}
                         {tarea.dueDate && (
                             <>
-                                <small className={`d-block mt-1 ${vencida ? 'text-danger' : 'text-info'}`}>
+                                <small className={`${styles.fechaEntrega} ${vencida ? styles.textDanger : styles.textInfo}`}>
                                     <i className="bi bi-calendar-event"></i>{' '}
                                     <strong>Fecha de entrega:</strong>{' '}
                                     {dayjs(tarea.dueDate).format('D [de] MMMM [de] YYYY')}
                                 </small>
-                                <small className={`d-block ${
-                                    tarea.status === 'progreso' ? 'text-primary' :
-                                        tarea.status === 'pendiente' ? 'text-dark' :
-                                            'text-success'
+                                <small className={`${styles.estado} ${
+                                    tarea.status === 'progreso' ? styles.titleProgreso :
+                                        tarea.status === 'pendiente' ? styles.titlePendiente :
+                                            styles.titleCompletada
                                 }`}>
                                     <i className="bi bi-info-circle"></i>{' '}
                                     <strong>Estado:</strong>{' '}
@@ -177,17 +185,20 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
                             </>
                         )}
                     </div>
-                    <div className="d-flex flex-column gap-2">
-                        <button
-                            className="btn btn-warning btn-sm"
-                            title="Editar"
-                            onClick={() => setModoEdicion(true)}
-                        >
-                            <i className="bi bi-pencil-fill"></i>
-                        </button>
+                    <div className={styles.btnGroup}>
+                        {tarea.status !== 'completada' && (
+                            <button
+                                className={styles.btnWarning}
+                                title="Editar"
+                                onClick={() => setModoEdicion(true)}
+                            >
+                                <i className="bi bi-pencil-fill"></i>
+                            </button>
+                        )}
+
                         {tarea.status === 'completada' && (
                             <button
-                                className="btn btn-danger btn-sm"
+                                className={styles.btnDanger}
                                 title="Eliminar"
                                 onClick={() => onDelete(tarea.id)}
                             >

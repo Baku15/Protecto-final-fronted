@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import styles from './Login.module.css';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [mensaje, setMensaje] = useState('');
     const navigate = useNavigate();
+
+    const { login } = useContext(AuthContext);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,7 +19,7 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:3000/api/auth/login', formData);
-            localStorage.setItem('token', response.data.token);
+            login(response.data.token);
             navigate('/dashboard');
         } catch (error) {
             console.error(error);
@@ -24,67 +28,55 @@ const Login = () => {
     };
 
     return (
-        <div
-            style={{
-                backgroundImage: 'url("/ucb-logo.jpg")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                minHeight: '100vh',
-                paddingTop: '60px',
-            }}
-        >
+        <div className={styles.fondo}>
             {/* NAVBAR */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-                <div className="container">
-                    <Link className="navbar-brand" to="/">Gestor de Tareas</Link>
-                    <div className="d-flex">
-                        <Link to="/registro" className="btn btn-outline-light">Registrarse</Link>
-                    </div>
+            <nav className={styles.navbar}>
+                <Link className={styles.navbarBrand} to="/">
+                    Gestor de Tareas
+                </Link>
+                <div>
+                    <Link to="/registro" className={styles.btnOutlineLight}>
+                        Registrarse
+                    </Link>
                 </div>
             </nav>
 
             {/* FORMULARIO */}
-            <div className="container mt-5 pt-4">
-                <div className="row justify-content-center">
-                    <div className="col-md-6">
-                        <div className="card shadow bg-light bg-opacity-75">
-                            <div className="card-body">
-                                <h3 className="text-center mb-4">Iniciar sesión</h3>
-                                <form onSubmit={handleSubmit}>
-                                    <div className="mb-3">
-                                        <label className="form-label">Correo electrónico</label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            className="form-control"
-                                            placeholder="Correo"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Contraseña</label>
-                                        <input
-                                            type="password"
-                                            name="password"
-                                            className="form-control"
-                                            placeholder="Contraseña"
-                                            value={formData.password}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <button type="submit" className="btn btn-success w-100">
-                                        Ingresar
-                                    </button>
-                                </form>
-                                {mensaje && (
-                                    <div className="alert alert-danger mt-3 text-center">
-                                        {mensaje}
-                                    </div>
-                                )}
-                            </div>
+            <div className={styles.container}>
+                <div className={styles.rowCenter}>
+                    <div className={styles.colMd6}>
+                        <div className={styles.card}>
+                            <h3 className={`${styles.textCenter} ${styles.mb4}`}>Iniciar sesión</h3>
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label className={styles.formLabel}>Correo electrónico</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        className={styles.formControl}
+                                        placeholder="Correo"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label className={styles.formLabel}>Contraseña</label>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        className={styles.formControl}
+                                        placeholder="Contraseña"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" className={styles.btnSuccess}>
+                                    Ingresar
+                                </button>
+                            </form>
+                            {mensaje && <div className={styles.alertDanger}>{mensaje}</div>}
                         </div>
                     </div>
                 </div>

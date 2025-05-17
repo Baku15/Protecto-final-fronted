@@ -4,13 +4,14 @@ import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
-import debounce from 'lodash.debounce'; // <- Asegúrate de instalar lodash.debounce
+import debounce from 'lodash.debounce';
+import styles from './Dashboard.module.css';  // <-- Importa CSS Module
 
 const Dashboard = () => {
     const [tareas, setTareas] = useState([]);
     const [filtros, setFiltros] = useState({
         titulo: '',
-        estado: '', // Puedes mantenerlo para filtros futuros si quieres
+        estado: '',
         order: '',
         fechaInicio: '',
         fechaFin: '',
@@ -23,18 +24,10 @@ const Dashboard = () => {
     const obtenerTareas = useCallback(async () => {
         try {
             const params = {};
-            const {
-                titulo,
-                estado,  // <- Comentado para traer todas las tareas sin filtro por estado
-                order,
-                fechaInicio,
-                fechaFin,
-                dueDateDesde,
-                dueDateHasta
-            } = filtros;
+            const { titulo, estado, order, fechaInicio, fechaFin, dueDateDesde, dueDateHasta } = filtros;
 
             if (titulo) params.title = titulo;
-            if (estado) params.status = estado; // comentado para traer todas
+            if (estado) params.status = estado;
             if (order) params.orden = order;
             if (fechaInicio && fechaFin) {
                 params.fechaInicio = fechaInicio;
@@ -44,7 +37,6 @@ const Dashboard = () => {
                 params.dueDateDesde = dueDateDesde;
                 params.dueDateHasta = dueDateHasta;
             }
-            console.log("Parámetros enviados al backend:", params);
 
             const response = await axios.get('http://localhost:3000/api/tasks/filter', {
                 headers: { Authorization: `Bearer ${token}` },
@@ -68,7 +60,6 @@ const Dashboard = () => {
         }
     };
 
-    // Función para limpiar filtros de fecha
     const limpiarFiltrosFecha = () => {
         setFiltros((prev) => ({
             ...prev,
@@ -77,12 +68,10 @@ const Dashboard = () => {
         }));
     };
 
-    // Ejecutar la carga inicial
     useEffect(() => {
         obtenerTareas();
     }, [obtenerTareas]);
 
-    // Debounce para evitar muchas peticiones al backend al filtrar por título
     const debouncedTituloChange = useMemo(
         () =>
             debounce((value) => {
@@ -94,7 +83,6 @@ const Dashboard = () => {
         []
     );
 
-    // Limpieza del debounce al desmontar el componente
     useEffect(() => {
         return () => {
             debouncedTituloChange.cancel();
@@ -114,30 +102,29 @@ const Dashboard = () => {
         }
     };
 
-    // Dividir tareas por estado para mostrar en columnas
     const tareasPendientes = tareas.filter(t => t.status === 'pendiente');
     const tareasEnProgreso = tareas.filter(t => t.status === 'progreso');
     const tareasCompletadas = tareas.filter(t => t.status === 'completada');
 
     return (
-        <div className="d-flex" style={{ height: '100vh' }}>
+        <div className={styles.container}>
             <Sidebar />
-            <main style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
-                <h2 className="mb-4 text-center">Gestor de Tareas</h2>
+            <main className={styles.main}>
+                <h2 className={`${styles.title} mb-4`}>Gestor de Tareas</h2>
 
-                <div className="row mb-4">
+                <div className={styles.row}>
                     {/* Formulario nueva tarea */}
-                    <div className="col-md-4">
-                        <div className="card p-3 shadow-sm border-info h-100">
-                            <h5 className="mb-3 text-info">Nueva Tarea</h5>
+                    <div className={styles.column}>
+                        <div className={`${styles.card} ${styles.cardInfo}`}>
+                            <h5 className={`${styles.filtersTitle} text-info`}>Nueva Tarea</h5>
                             <TaskForm onTaskCreated={obtenerTareas} />
                         </div>
                     </div>
 
                     {/* Filtros generales */}
-                    <div className="col-md-4">
-                        <div className="card p-3 shadow-sm bg-light border-success h-100">
-                            <h5 className="mb-3 text-success">Filtros generales</h5>
+                    <div className={styles.column}>
+                        <div className={`${styles.card} ${styles.cardSuccess}`}>
+                            <h5 className={`${styles.filtersTitle} text-success`}>Filtros generales</h5>
                             <div className="mb-3">
                                 <input
                                     type="text"
@@ -177,9 +164,9 @@ const Dashboard = () => {
                     </div>
 
                     {/* Filtros por rango de fecha */}
-                    <div className="col-md-4">
-                        <div className="card p-3 shadow-sm bg-light border-primary h-100">
-                            <h5 className="mb-3 text-primary">Filtros por fecha</h5>
+                    <div className={styles.column}>
+                        <div className={`${styles.card} ${styles.cardPrimary}`}>
+                            <h5 className={`${styles.filtersTitle} text-primary`}>Filtros por fecha</h5>
                             <div className="mb-3">
                                 <label className="form-label">Fecha desde (creación)</label>
                                 <input
@@ -201,11 +188,10 @@ const Dashboard = () => {
                                 />
                             </div>
 
-                            {/* Botón para limpiar filtros de fecha */}
-                            <div className="d-grid">
+                            <div>
                                 <button
                                     type="button"
-                                    className="btn btn-outline-danger"
+                                    className={styles.btnOutlineDanger}
                                     onClick={limpiarFiltrosFecha}
                                 >
                                     Limpiar filtros de fecha
@@ -215,13 +201,11 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Mostrar tareas divididas en 3 columnas */}
                 <h5 className="mb-3 text-secondary">Listado de tareas por estado</h5>
-                <div className="row">
-                    {/* Pendientes */}
-                    <div className="col-md-4">
-                        <h5 className="text-warning text-center">Pendientes</h5>
-                        <ul className="list-group">
+                <div className={styles.row}>
+                    <div className={styles.column}>
+                        <h5 className={styles.textWarning}>Pendientes</h5>
+                        <ul className={styles.listGroup}>
                             {tareasPendientes.length ? (
                                 tareasPendientes.map(tarea => (
                                     <TaskItem
@@ -232,19 +216,21 @@ const Dashboard = () => {
                                     />
                                 ))
                             ) : (
-                                <li className="list-group-item text-center text-muted">
+                                <li className={styles.listItem}>
                                     No hay tareas pendientes
                                 </li>
                             )}
                         </ul>
                     </div>
 
-                    {/* En progreso */}
-                    <div className="col-md-4">
-                        <h5 className="text-primary text-center">En Progreso</h5>
-                        <ul className="list-group">
-                            {tareasEnProgreso.length ? (
-                                tareasEnProgreso.map(tarea => (
+
+                    <div className={styles.column}> <h5 className={styles.textPrimary}>En progreso</h5> <ul className={styles.listGroup}> {tareasEnProgreso.length ? ( tareasEnProgreso.map(tarea => ( <TaskItem key={tarea.id} tarea={tarea} onUpdate={obtenerTareas} onDelete={eliminarTarea} /> )) ) : ( <li className={styles.listItem}> No hay tareas en progreso </li> )} </ul> </div>
+
+                    <div className={styles.column}>
+                        <h5 className={styles.textSuccess}>Completadas</h5>
+                        <ul className={styles.listGroup}>
+                            {tareasCompletadas.length ? (
+                                tareasCompletadas.map(tarea => (
                                     <TaskItem
                                         key={tarea.id}
                                         tarea={tarea}
@@ -253,24 +239,7 @@ const Dashboard = () => {
                                     />
                                 ))
                             ) : (
-                                <li className="list-group-item text-center text-muted">
-                                    No hay tareas en progreso
-                                </li>
-                            )}
-                        </ul>
-                    </div>
-
-                    {/* Completadas */}
-                    <div className="col-md-4">
-                        <h5 className="text-success text-center">Completadas</h5>
-                        <ul className="list-group">
-                            {tareasCompletadas.length ? (
-                                tareasCompletadas.map(tarea => (
-
-                                    <TaskItem key={tarea.id} tarea={tarea} onUpdate={obtenerTareas} onDelete={eliminarTarea} />
-                                ))
-                            ) : (
-                                <li className="list-group-item text-center text-muted">
+                                <li className={styles.listItem}>
                                     No hay tareas completadas
                                 </li>
                             )}
@@ -283,3 +252,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

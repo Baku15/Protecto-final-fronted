@@ -1,0 +1,33 @@
+.background {
+    background-image: url('/public/ucb-logo.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    padding-top: 60px;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #212529; /* bg-dark */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1rem;
+    color: white;
+    z-index: 1000;
+}
+
+
+.containerForm {
+    margin-top: 40px; /* un margen superior para separar del navbar */
+    padding: 20px; /* un poco de espacio interno */
+}
+
+.card {
+    border-radius: 12px; /* bordes redondeados */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* sombra suave */
+    padding: 25px; /* espacio interno dentro de la tarjeta */
+    background-color: rgba(255, 255, 255, 0.9); /* fondo blanco semitransparente */
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import styles from './Registro.module.css';
 
 const Registro = () => {
     const [formData, setFormData] = useState({
@@ -29,17 +30,9 @@ const Registro = () => {
     };
 
     return (
-        <div
-            style={{
-                backgroundImage: 'url("/ucb-logo.jpg")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                minHeight: '100vh',
-                paddingTop: '60px',
-            }}
-        >
+        <div className={styles.background}>
             {/* NAVBAR */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <nav className={`navbar navbar-expand-lg navbar-dark bg-dark fixed-top`}>
                 <div className="container">
                     <Link className="navbar-brand" to="/">Gestor de Tareas</Link>
                     <div className="d-flex">
@@ -49,10 +42,10 @@ const Registro = () => {
             </nav>
 
             {/* FORMULARIO */}
-            <div className="container mt-5 pt-4">
+            <div className={`container mt-5 pt-4 ${styles.containerForm}`}>
                 <div className="row justify-content-center">
                     <div className="col-md-6">
-                        <div className="card shadow bg-light bg-opacity-75">
+                        <div className={`card shadow bg-light bg-opacity-75 ${styles.card}`}>
                             <div className="card-body">
                                 <h3 className="text-center mb-4">Registro de Usuario</h3>
                                 <form onSubmit={handleSubmit}>

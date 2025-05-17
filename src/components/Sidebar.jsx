@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaPlus, FaList, FaEdit, FaSignOutAlt, FaBars } from 'react-icons/fa';
+import { FaSignOutAlt, FaBars, FaHome } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -15,13 +15,6 @@ const Sidebar = () => {
         navigate('/');
     };
 
-    // Definimos las opciones del sidebar
-    const menuItems = [
-        { name: 'Crear', icon: <FaPlus />, path: '/dashboard/create' },
-        { name: 'Listar', icon: <FaList />, path: '/dashboard' },
-        { name: 'Editar', icon: <FaEdit />, path: '/dashboard/edit' },
-    ];
-
     return (
         <nav
             style={{
@@ -35,7 +28,7 @@ const Sidebar = () => {
                 paddingTop: '10px',
             }}
         >
-            {/* Botón para colapsar/expandir */}
+            {/* Botón de colapsar/expandir */}
             <div
                 style={{
                     padding: '10px',
@@ -48,7 +41,7 @@ const Sidebar = () => {
                 <FaBars size={20} />
             </div>
 
-            {/* Menú */}
+            {/* Ícono de Home */}
             <ul
                 style={{
                     listStyleType: 'none',
@@ -57,28 +50,24 @@ const Sidebar = () => {
                     flexGrow: 1,
                 }}
             >
-                {menuItems.map((item) => (
-                    <li key={item.name} style={{ margin: '10px 0' }}>
-                        <Link
-                            to={item.path}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                color: 'white',
-                                textDecoration: 'none',
-                                padding: '8px 15px',
-                                whiteSpace: 'nowrap',
-                            }}
-                            className="sidebar-link"
-                        >
-                            <span style={{ fontSize: '18px', minWidth: '24px' }}>{item.icon}</span>
-                            {!collapsed && <span style={{ marginLeft: '15px' }}>{item.name}</span>}
-                        </Link>
-                    </li>
-                ))}
+                <li style={{ margin: '10px 0' }}>
+                    <Link
+                        to="/dashboard"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'white',
+                            textDecoration: 'none',
+                            padding: '8px 15px',
+                        }}
+                    >
+                        <FaHome size={18} />
+                        {!collapsed && <span style={{ marginLeft: '15px' }}>Inicio</span>}
+                    </Link>
+                </li>
             </ul>
 
-            {/* Logout abajo */}
+            {/* Logout */}
             <div
                 onClick={handleLogout}
                 style={{
@@ -90,7 +79,6 @@ const Sidebar = () => {
                     marginTop: 'auto',
                     color: 'white',
                 }}
-                className="sidebar-logout"
             >
                 <FaSignOutAlt size={18} />
                 {!collapsed && <span style={{ marginLeft: '15px' }}>Cerrar sesión</span>}
