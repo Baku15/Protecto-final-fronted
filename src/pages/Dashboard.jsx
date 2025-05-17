@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
+
 import Sidebar from '../components/Sidebar';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
@@ -9,9 +10,8 @@ const Dashboard = () => {
     const [tareas, setTareas] = useState([]);
     const [filtros, setFiltros] = useState({
         titulo: '',
-        estado: '',
+        estado: '', // Puedes mantenerlo para filtros futuros si quieres
         order: '',
-        fecha: '',
         fechaInicio: '',
         fechaFin: '',
         dueDateDesde: '',
@@ -25,9 +25,8 @@ const Dashboard = () => {
             const params = {};
             const {
                 titulo,
-                estado,
+                estado,  // <- Comentado para traer todas las tareas sin filtro por estado
                 order,
-                fecha,
                 fechaInicio,
                 fechaFin,
                 dueDateDesde,
@@ -35,9 +34,8 @@ const Dashboard = () => {
             } = filtros;
 
             if (titulo) params.title = titulo;
-            if (estado) params.status = estado;
+            if (estado) params.status = estado; // comentado para traer todas
             if (order) params.orden = order;
-            if (fecha) params.dueDate = fecha;
             if (fechaInicio && fechaFin) {
                 params.fechaInicio = fechaInicio;
                 params.fechaFin = fechaFin;
@@ -46,6 +44,7 @@ const Dashboard = () => {
                 params.dueDateDesde = dueDateDesde;
                 params.dueDateHasta = dueDateHasta;
             }
+            console.log("Parámetros enviados al backend:", params);
 
             const response = await axios.get('http://localhost:3000/api/tasks/filter', {
                 headers: { Authorization: `Bearer ${token}` },
@@ -73,7 +72,6 @@ const Dashboard = () => {
     const limpiarFiltrosFecha = () => {
         setFiltros((prev) => ({
             ...prev,
-            fecha: '',
             fechaInicio: '',
             fechaFin: ''
         }));
@@ -116,6 +114,11 @@ const Dashboard = () => {
         }
     };
 
+    // Dividir tareas por estado para mostrar en columnas
+    const tareasPendientes = tareas.filter(t => t.status === 'pendiente');
+    const tareasEnProgreso = tareas.filter(t => t.status === 'progreso');
+    const tareasCompletadas = tareas.filter(t => t.status === 'completada');
+
     return (
         <div className="d-flex" style={{ height: '100vh' }}>
             <Sidebar />
@@ -154,6 +157,7 @@ const Dashboard = () => {
                                 >
                                     <option value="">Todos los estados</option>
                                     <option value="pendiente">Pendiente</option>
+                                    <option value="progreso">En Progreso</option>
                                     <option value="completada">Completada</option>
                                 </select>
                             </div>
@@ -172,20 +176,10 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    {/* Filtros por fecha */}
+                    {/* Filtros por rango de fecha */}
                     <div className="col-md-4">
                         <div className="card p-3 shadow-sm bg-light border-primary h-100">
                             <h5 className="mb-3 text-primary">Filtros por fecha</h5>
-                            <div className="mb-3">
-                                <label className="form-label">Fecha exacta</label>
-                                <input
-                                    type="date"
-                                    name="fecha"
-                                    className="form-control"
-                                    value={filtros.fecha}
-                                    onChange={handleFiltroChange}
-                                />
-                            </div>
                             <div className="mb-3">
                                 <label className="form-label">Fecha desde (creación)</label>
                                 <input
@@ -221,24 +215,68 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Lista de tareas */}
-                <h5 className="mb-3 text-secondary">Listado de tareas</h5>
-                <ul className="list-group mb-5">
-                    {tareas.length ? (
-                        tareas.map((tarea) => (
-                            <TaskItem
-                                key={tarea.id}
-                                tarea={tarea}
-                                onUpdate={obtenerTareas}
-                                onDelete={eliminarTarea}
-                            />
-                        ))
-                    ) : (
-                        <li className="list-group-item text-center text-muted">
-                            No se encontraron tareas
-                        </li>
-                    )}
-                </ul>
+                {/* Mostrar tareas divididas en 3 columnas */}
+                <h5 className="mb-3 text-secondary">Listado de tareas por estado</h5>
+                <div className="row">
+                    {/* Pendientes */}
+                    <div className="col-md-4">
+                        <h5 className="text-warning text-center">Pendientes</h5>
+                        <ul className="list-group">
+                            {tareasPendientes.length ? (
+                                tareasPendientes.map(tarea => (
+                                    <TaskItem
+                                        key={tarea.id}
+                                        tarea={tarea}
+                                        onUpdate={obtenerTareas}
+                                        onDelete={eliminarTarea}
+                                    />
+                                ))
+                            ) : (
+                                <li className="list-group-item text-center text-muted">
+                                    No hay tareas pendientes
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+
+                    {/* En progreso */}
+                    <div className="col-md-4">
+                        <h5 className="text-primary text-center">En Progreso</h5>
+                        <ul className="list-group">
+                            {tareasEnProgreso.length ? (
+                                tareasEnProgreso.map(tarea => (
+                                    <TaskItem
+                                        key={tarea.id}
+                                        tarea={tarea}
+                                        onUpdate={obtenerTareas}
+                                        onDelete={eliminarTarea}
+                                    />
+                                ))
+                            ) : (
+                                <li className="list-group-item text-center text-muted">
+                                    No hay tareas en progreso
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+
+                    {/* Completadas */}
+                    <div className="col-md-4">
+                        <h5 className="text-success text-center">Completadas</h5>
+                        <ul className="list-group">
+                            {tareasCompletadas.length ? (
+                                tareasCompletadas.map(tarea => (
+
+                                    <TaskItem key={tarea.id} tarea={tarea} onUpdate={obtenerTareas} onDelete={eliminarTarea} />
+                                ))
+                            ) : (
+                                <li className="list-group-item text-center text-muted">
+                                    No hay tareas completadas
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+                </div>
             </main>
         </div>
     );

@@ -1,3 +1,4 @@
+// TaskItem.jsx
 import { useState } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -41,7 +42,10 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
         try {
             await axios.put(
                 `http://localhost:3000/api/tasks/${tarea.id}`,
-                formData,
+                {
+                    ...formData,
+                    status: 'progreso',
+                },
                 { headers }
             );
             setModoEdicion(false);
@@ -53,15 +57,25 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
     };
 
     const alternarEstado = async () => {
-        const nuevoEstado = tarea.status === 'completada' ? 'pendiente' : 'completada';
-
         try {
-            await axios.put(
-                `http://localhost:3000/api/tasks/${tarea.id}`,
-                { status: nuevoEstado },
-                { headers }
-            );
-            onUpdate();
+            let nuevoEstado = tarea.status;
+
+            if (tarea.status === 'pendiente') {
+                nuevoEstado = 'progreso';
+            } else if (tarea.status === 'progreso') {
+                nuevoEstado = 'completada';
+            } else if (tarea.status === 'completada') {
+                nuevoEstado = 'progreso';
+            }
+
+            if (nuevoEstado !== tarea.status) {
+                await axios.put(
+                    `http://localhost:3000/api/tasks/${tarea.id}`,
+                    { status: nuevoEstado },
+                    { headers }
+                );
+                onUpdate();
+            }
         } catch (error) {
             console.error('❌ Error al cambiar estado:', error.response?.data || error.message);
             setError('Error al cambiar estado. Intenta de nuevo.');
@@ -119,81 +133,74 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
         const vencida = tarea.dueDate && dayjs(tarea.dueDate).isBefore(dayjs(), 'day');
 
         return (
-            <div className="d-flex justify-content-between gap-3">
-                <div className="flex-grow-1">
-                    <div className="form-check">
-                        <input
-                            type="checkbox"
-                            className="form-check-input me-2"
-                            id={`check-${tarea.id}`}
-                            checked={tarea.status === 'completada'}
-                            onChange={alternarEstado}
-                        />
-                        <label
-                            htmlFor={`check-${tarea.id}`}
-                            className={`form-check-label ${
-                                tarea.status === 'completada'
-                                    ? 'text-decoration-line-through text-muted'
-                                    : 'fw-bold'
-                            }`}
-                        >
-                            {tarea.title}
-                        </label>
+            <li className="list-group-item mb-3 rounded-4 shadow-sm border border-1 p-3 animate__animated animate__fadeIn">
+                <div className="d-flex justify-content-between gap-3">
+                    <div className="flex-grow-1">
+                        <div className="form-check">
+                            <input
+                                type="checkbox"
+                                className="form-check-input me-2"
+                                id={`check-${tarea.id}`}
+                                checked={tarea.status === 'completada'}
+                                onChange={alternarEstado}
+                            />
+                            <label
+                                htmlFor={`check-${tarea.id}`}
+                                className={`form-check-label ${
+                                    tarea.status === 'progreso'
+                                        ? 'fw-bold text-primary'
+                                        : tarea.status === 'pendiente'
+                                            ? 'fw-bold text-dark'
+                                            : 'fw-bold text-success'
+                                }`}
+                            >
+                                {tarea.title}
+                            </label>
+                        </div>
+                        {tarea.description && <div className="text-secondary">{tarea.description}</div>}
+                        {tarea.dueDate && (
+                            <>
+                                <small className={`d-block mt-1 ${vencida ? 'text-danger' : 'text-info'}`}>
+                                    <i className="bi bi-calendar-event"></i>{' '}
+                                    <strong>Fecha de entrega:</strong>{' '}
+                                    {dayjs(tarea.dueDate).format('D [de] MMMM [de] YYYY')}
+                                </small>
+                                <small className={`d-block ${
+                                    tarea.status === 'progreso' ? 'text-primary' :
+                                        tarea.status === 'pendiente' ? 'text-dark' :
+                                            'text-success'
+                                }`}>
+                                    <i className="bi bi-info-circle"></i>{' '}
+                                    <strong>Estado:</strong>{' '}
+                                    {tarea.status.charAt(0).toUpperCase() + tarea.status.slice(1)}
+                                </small>
+                            </>
+                        )}
                     </div>
-                    {tarea.description && <div className="text-secondary">{tarea.description}</div>}
-                    {tarea.dueDate && (
-                        <>
-                            <small className={`d-block mt-1 ${vencida ? 'text-danger' : 'text-info'}`}>
-                                <i className="bi bi-calendar-event"></i>{' '}
-                                <strong>Fecha de entrega:</strong>{' '}
-                                {dayjs(tarea.dueDate).format('D [de] MMMM [de] YYYY')}
-                            </small>
-                            <small className={`d-block ${vencida ? 'text-warning' : 'text-secondary'}`}>
-                                <i className="bi bi-hourglass-split"></i>{' '}
-                                <strong>Límite:</strong>{' '}
-                                {dayjs(tarea.dueDate).format('DD/MM/YYYY')}
-                            </small>
-                        </>
-                    )}
-
-                    <span
-                        className={`badge mt-2 ${
-                            tarea.status === 'completada' ? 'bg-success' : 'bg-warning text-dark'
-                        }`}
-                    >
-                        <i
-                            className={`bi ${
-                                tarea.status === 'completada' ? 'bi-check2-circle' : 'bi-exclamation-circle'
-                            }`}
-                        ></i>{' '}
-                        {tarea.status}
-                    </span>
+                    <div className="d-flex flex-column gap-2">
+                        <button
+                            className="btn btn-warning btn-sm"
+                            title="Editar"
+                            onClick={() => setModoEdicion(true)}
+                        >
+                            <i className="bi bi-pencil-fill"></i>
+                        </button>
+                        {tarea.status === 'completada' && (
+                            <button
+                                className="btn btn-danger btn-sm"
+                                title="Eliminar"
+                                onClick={() => onDelete(tarea.id)}
+                            >
+                                <i className="bi bi-trash-fill"></i>
+                            </button>
+                        )}
+                    </div>
                 </div>
-                <div className="d-flex flex-column justify-content-start align-items-end gap-1">
-                    <button
-                        className="btn btn-sm btn-outline-primary"
-                        onClick={() => setModoEdicion(true)}
-                        title="Editar"
-                    >
-                        <i className="bi bi-pencil-square"></i>
-                    </button>
-                    <button
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() => onDelete(tarea.id)}
-                        title="Eliminar"
-                    >
-                        <i className="bi bi-trash3"></i>
-                    </button>
-                </div>
-            </div>
+            </li>
         );
     };
 
-    return (
-        <li className="list-group-item mb-3 rounded-4 shadow-sm border border-1 p-3 animate__animated animate__fadeIn">
-            {modoEdicion ? renderModoEdicion() : renderVistaNormal()}
-        </li>
-    );
+    return modoEdicion ? renderModoEdicion() : renderVistaNormal();
 };
 
 export default TaskItem;

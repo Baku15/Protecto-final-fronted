@@ -1,3 +1,4 @@
+// TaskForm.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -49,7 +50,7 @@ const TaskForm = ({ onTaskCreated }) => {
                     title: formData.title,
                     description: formData.description,
                     dueDate: formData.dueDate,
-                    status: 'pendiente',
+                    status: 'pendiente', // status pendiente al crear
                 },
                 {
                     headers: { Authorization: `Bearer ${token}` },
