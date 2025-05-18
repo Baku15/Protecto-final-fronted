@@ -23,7 +23,7 @@ const Login = () => {
             navigate('/dashboard');
         } catch (error) {
             console.error(error);
-            setMensaje('❌ Error al iniciar sesión. Verifica tus datos.');
+            setMensaje('❌ Error al iniciar sesión. Verifica tu nombre o correo electronico.');
         }
     };
 
