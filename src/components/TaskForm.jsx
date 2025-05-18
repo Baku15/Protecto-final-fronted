@@ -1,4 +1,3 @@
-// TaskForm.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -45,12 +44,12 @@ const TaskForm = ({ onTaskCreated }) => {
 
         try {
             await axios.post(
-                'http://localhost:3000/api/tasks',
+                `${process.env.REACT_APP_API_URL}/api/tasks`,
                 {
                     title: formData.title,
                     description: formData.description,
                     dueDate: formData.dueDate,
-                    status: 'pendiente', // status pendiente al crear
+                    status: 'pendiente',
                 },
                 {
                     headers: { Authorization: `Bearer ${token}` },

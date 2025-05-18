@@ -42,7 +42,7 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
 
         try {
             await axios.put(
-                `http://localhost:3000/api/tasks/${tarea.id}`,
+                `${process.env.REACT_APP_API_URL}/api/tasks/${tarea.id}`,
                 {
                     ...formData,
                     status: 'progreso',
@@ -78,7 +78,7 @@ const TaskItem = ({ tarea, onUpdate, onDelete }) => {
 
             if (nuevoEstado !== tarea.status) {
                 await axios.put(
-                    `http://localhost:3000/api/tasks/${tarea.id}`,
+                    `${process.env.REACT_APP_API_URL}/api/tasks/${tarea.id}`,
                     { status: nuevoEstado },
                     { headers }
                 );
