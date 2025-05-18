@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
 import debounce from 'lodash.debounce';
-import styles from './Dashboard.module.css';  // <-- Importa CSS Module
+import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
     const [tareas, setTareas] = useState([]);
@@ -110,139 +110,107 @@ const Dashboard = () => {
         <div className={styles.container}>
             <Sidebar />
             <main className={styles.main}>
-                <h2 className={`${styles.title} mb-4`}>Gestor de Tareas</h2>
+                <h2 className={styles.title}>Gestor de Tareas</h2>
 
                 <div className={styles.row}>
-                    {/* Formulario nueva tarea */}
                     <div className={styles.column}>
                         <div className={`${styles.card} ${styles.cardInfo}`}>
-                            <h5 className={`${styles.filtersTitle} text-info`}>Nueva Tarea</h5>
+                            <h5 className={styles.filtersTitle}>Nueva Tarea</h5>
                             <TaskForm onTaskCreated={obtenerTareas} />
                         </div>
                     </div>
 
-                    {/* Filtros generales */}
                     <div className={styles.column}>
                         <div className={`${styles.card} ${styles.cardSuccess}`}>
-                            <h5 className={`${styles.filtersTitle} text-success`}>Filtros generales</h5>
-                            <div className="mb-3">
-                                <input
-                                    type="text"
-                                    name="titulo"
-                                    className="form-control"
-                                    placeholder="Buscar por título"
-                                    defaultValue={filtros.titulo}
-                                    onChange={handleFiltroChange}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <select
-                                    name="estado"
-                                    className="form-select"
-                                    value={filtros.estado}
-                                    onChange={handleFiltroChange}
-                                >
-                                    <option value="">Todos los estados</option>
-                                    <option value="pendiente">Pendiente</option>
-                                    <option value="progreso">En Progreso</option>
-                                    <option value="completada">Completada</option>
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                                <select
-                                    name="order"
-                                    className="form-select"
-                                    value={filtros.order}
-                                    onChange={handleFiltroChange}
-                                >
-                                    <option value="">Ordenar por</option>
-                                    <option value="recientes">Más recientes</option>
-                                    <option value="antiguos">Más antiguos</option>
-                                </select>
-                            </div>
+                            <h5 className={styles.filtersTitle}>Filtros generales</h5>
+                            <input
+                                type="text"
+                                name="titulo"
+                                className="form-control mb-2"
+                                placeholder="Buscar por título"
+                                defaultValue={filtros.titulo}
+                                onChange={handleFiltroChange}
+                            />
+                            <select
+                                name="estado"
+                                className="form-select mb-2"
+                                value={filtros.estado}
+                                onChange={handleFiltroChange}
+                            >
+                                <option value="">Todos los estados</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="progreso">En Progreso</option>
+                                <option value="completada">Completada</option>
+                            </select>
+                            <select
+                                name="order"
+                                className="form-select"
+                                value={filtros.order}
+                                onChange={handleFiltroChange}
+                            >
+                                <option value="">Ordenar por</option>
+                                <option value="recientes">Más recientes</option>
+                                <option value="antiguos">Más antiguos</option>
+                            </select>
                         </div>
                     </div>
 
-                    {/* Filtros por rango de fecha */}
                     <div className={styles.column}>
                         <div className={`${styles.card} ${styles.cardPrimary}`}>
-                            <h5 className={`${styles.filtersTitle} text-primary`}>Filtros por fecha</h5>
-                            <div className="mb-3">
-                                <label className="form-label">Fecha desde (creación)</label>
-                                <input
-                                    type="date"
-                                    name="fechaInicio"
-                                    className="form-control"
-                                    value={filtros.fechaInicio}
-                                    onChange={handleFiltroChange}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label">Fecha hasta (creación)</label>
-                                <input
-                                    type="date"
-                                    name="fechaFin"
-                                    className="form-control"
-                                    value={filtros.fechaFin}
-                                    onChange={handleFiltroChange}
-                                />
-                            </div>
-
-                            <div>
-                                <button
-                                    type="button"
-                                    className={styles.btnOutlineDanger}
-                                    onClick={limpiarFiltrosFecha}
-                                >
-                                    Limpiar filtros de fecha
-                                </button>
-                            </div>
+                            <h5 className={styles.filtersTitle}>Filtros por fecha</h5>
+                            <label>Desde (creación)</label>
+                            <input
+                                type="date"
+                                name="fechaInicio"
+                                className="form-control mb-2"
+                                value={filtros.fechaInicio}
+                                onChange={handleFiltroChange}
+                            />
+                            <label>Hasta (creación)</label>
+                            <input
+                                type="date"
+                                name="fechaFin"
+                                className="form-control mb-2"
+                                value={filtros.fechaFin}
+                                onChange={handleFiltroChange}
+                            />
+                            <button
+                                type="button"
+                                className={styles.btnOutlineDanger}
+                                onClick={limpiarFiltrosFecha}
+                            >
+                                Limpiar filtros
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <h5 className="mb-3 text-secondary">Listado de tareas por estado</h5>
+                <h5 className="text-secondary">Listado de tareas por estado</h5>
                 <div className={styles.row}>
                     <div className={styles.column}>
                         <h5 className={styles.textWarning}>Pendientes</h5>
                         <ul className={styles.listGroup}>
-                            {tareasPendientes.length ? (
-                                tareasPendientes.map(tarea => (
-                                    <TaskItem
-                                        key={tarea.id}
-                                        tarea={tarea}
-                                        onUpdate={obtenerTareas}
-                                        onDelete={eliminarTarea}
-                                    />
-                                ))
-                            ) : (
-                                <li className={styles.listItem}>
-                                    No hay tareas pendientes
-                                </li>
-                            )}
+                            {tareasPendientes.length ? tareasPendientes.map(tarea => (
+                                <TaskItem key={tarea.id} tarea={tarea} onUpdate={obtenerTareas} onDelete={eliminarTarea} />
+                            )) : <li className={styles.listItem}>No hay tareas pendientes</li>}
                         </ul>
                     </div>
 
-
-                    <div className={styles.column}> <h5 className={styles.textPrimary}>En progreso</h5> <ul className={styles.listGroup}> {tareasEnProgreso.length ? ( tareasEnProgreso.map(tarea => ( <TaskItem key={tarea.id} tarea={tarea} onUpdate={obtenerTareas} onDelete={eliminarTarea} /> )) ) : ( <li className={styles.listItem}> No hay tareas en progreso </li> )} </ul> </div>
+                    <div className={styles.column}>
+                        <h5 className={styles.textPrimary}>En Progreso</h5>
+                        <ul className={styles.listGroup}>
+                            {tareasEnProgreso.length ? tareasEnProgreso.map(tarea => (
+                                <TaskItem key={tarea.id} tarea={tarea} onUpdate={obtenerTareas} onDelete={eliminarTarea} />
+                            )) : <li className={styles.listItem}>No hay tareas en progreso</li>}
+                        </ul>
+                    </div>
 
                     <div className={styles.column}>
                         <h5 className={styles.textSuccess}>Completadas</h5>
                         <ul className={styles.listGroup}>
-                            {tareasCompletadas.length ? (
-                                tareasCompletadas.map(tarea => (
-                                    <TaskItem
-                                        key={tarea.id}
-                                        tarea={tarea}
-                                        onUpdate={obtenerTareas}
-                                        onDelete={eliminarTarea}
-                                    />
-                                ))
-                            ) : (
-                                <li className={styles.listItem}>
-                                    No hay tareas completadas
-                                </li>
-                            )}
+                            {tareasCompletadas.length ? tareasCompletadas.map(tarea => (
+                                <TaskItem key={tarea.id} tarea={tarea} onUpdate={obtenerTareas} onDelete={eliminarTarea} />
+                            )) : <li className={styles.listItem}>No hay tareas completadas</li>}
                         </ul>
                     </div>
                 </div>
@@ -252,4 +220,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
