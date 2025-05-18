@@ -4,19 +4,37 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     min-height: 100vh;
+    margin: 0;
 }
 
 .auth-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 56px); /* navbar height */
+    min-height: calc(100vh - 56px); /* altura restando navbar */
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    flex-direction: column;
 }
 
 .auth-form {
     width: 100%;
     max-width: 500px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-sizing: border-box;
 }
 
+/* Responsivo para móviles */
+@media (max-width: 576px) {
+    .auth-form {
+        padding: 1.25rem;
+    }
+
+    .auth-container {
+        padding: 10px;
+    }
+}

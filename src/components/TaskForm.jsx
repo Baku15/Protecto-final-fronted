@@ -20,7 +20,6 @@ const TaskForm = ({ onTaskCreated }) => {
                 setMensaje(null);
                 setTipoMensaje(null);
             }, 5000);
-
             return () => clearTimeout(timer);
         }
     }, [mensaje]);
@@ -68,9 +67,9 @@ const TaskForm = ({ onTaskCreated }) => {
     };
 
     return (
-        <form onSubmit={crearTarea} className="mb-3">
+        <form onSubmit={crearTarea} className="mb-3 p-3 bg-light rounded shadow-sm">
             <div className="mb-3">
-                <label className="form-label fs-6 fw-bold">Título</label>
+                <label className="form-label fw-bold">Título</label>
                 <input
                     type="text"
                     name="title"
@@ -83,7 +82,7 @@ const TaskForm = ({ onTaskCreated }) => {
             </div>
 
             <div className="mb-3">
-                <label className="form-label fs-6 fw-bold">Descripción</label>
+                <label className="form-label fw-bold">Descripción</label>
                 <textarea
                     name="description"
                     className="form-control"
@@ -94,7 +93,7 @@ const TaskForm = ({ onTaskCreated }) => {
             </div>
 
             <div className="mb-3">
-                <label className="form-label fs-6 fw-bold">Fecha de entrega</label>
+                <label className="form-label fw-bold">Fecha de entrega</label>
                 <input
                     type="date"
                     name="dueDate"
@@ -115,11 +114,7 @@ const TaskForm = ({ onTaskCreated }) => {
                 </div>
             )}
 
-            <button
-                type="submit"
-                className="btn btn-success"
-                style={{ width: '100%' }}
-            >
+            <button type="submit" className="btn btn-success w-100">
                 Crear tarea
             </button>
         </form>

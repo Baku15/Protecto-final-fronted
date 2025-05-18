@@ -19,6 +19,7 @@
     padding: 1.2rem 1rem;
     color: white;
     z-index: 1000;
+    flex-wrap: wrap;
 }
 
 .navbarBrand {
@@ -51,14 +52,22 @@
     padding: 0 1rem;
 }
 
+@media (max-width: 576px) {
+    .container {
+        margin: 3rem 1rem 0 1rem;
+    }
+}
+
 .rowCenter {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .colMd6 {
     width: 100%;
     max-width: 600px;
+    padding: 0 1rem;
 }
 
 .card {
@@ -108,6 +117,7 @@
     width: 100%;
     cursor: pointer;
     border: none;
+    transition: background-color 0.3s ease;
 }
 
 .btnSuccess:hover {

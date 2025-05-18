@@ -1,10 +1,13 @@
 .App {
   text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+  max-width: 100%;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -22,10 +25,20 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding: 1rem;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .App-link {
   color: #61dafb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.App-link:hover,
+.App-link:focus {
+  color: #21a1f1;
 }
 
 @keyframes App-logo-spin {
@@ -34,5 +47,17 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 576px) {
+  .App-header {
+    font-size: calc(10px + 1.5vmin);
+    padding: 2rem 1rem;
+  }
+
+  .App-logo {
+    height: 30vmin;
   }
 }
