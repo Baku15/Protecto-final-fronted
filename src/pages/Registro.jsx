@@ -19,7 +19,7 @@ const Registro = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3000/api/auth/register', formData);
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, formData);
             setMensaje('✅ Registro exitoso. Redirigiendo...');
             setFormData({ name: '', email: '', password: '' });
             setTimeout(() => navigate('/'), 2000);

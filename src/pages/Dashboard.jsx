@@ -38,7 +38,7 @@ const Dashboard = () => {
                 params.dueDateHasta = dueDateHasta;
             }
 
-            const response = await axios.get('http://localhost:3000/api/tasks/filter', {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/tasks/filter`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params
             });
@@ -51,7 +51,7 @@ const Dashboard = () => {
 
     const eliminarTarea = async (id) => {
         try {
-            await axios.delete(`http://localhost:3000/api/tasks/${id}`, {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/tasks/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             obtenerTareas();
